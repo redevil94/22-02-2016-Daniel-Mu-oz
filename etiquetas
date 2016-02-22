@@ -1,0 +1,18 @@
+# VARIABLE SEX #####
+library(foreign)
+require (foreign)
+sdem215<- read.dbf("C:\\Users\\SALA-C25\\Desktop\\SDEMT215.dbf")
+View(sdem215)
+sdem215$SEX<- ordered(sdem215$SEX,levels=c(1,2), labels=c("HOMBRES","MUJERES"))##### ETIQUETARRRRRR
+#Obtiene la variable CLASE2(Población ocupada y no ocupada) a la cual asigna etiquetas a los niveles
+c2<- wtd.table(sdem215$SEX, weights = sdem215$FAC)
+write.csv(c2,file='C:\\Users\\SALA-C25\\Desktop\\SDEMT215.dbf')
+c2
+View(sdem215)
+
+# EJERCICIO CLASE. ETIQUETEN LA VARIABLE NAC_MES###
+sdem215$NAC_MES<- ordered(sdem215$NAC_MES,levels=c("01","02","03","04","05","06","07","08","09",10,11,12,99), labels=c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE","N.A."))
+n1<- wtd.table(sdem215$NAC_MES, weights = sdem215$FAC)
+write.csv(n1,file='C:\\Users\\SALA-C25\\Desktop\\SDEMT215.dbf')
+n1
+View(sdem215)
