@@ -1,0 +1,71 @@
+###############RECODIFICAR#############################
+#0.3 LIMPIAR EL ENTORNO DE TRABAJO
+rm(list = ls())
+
+#0.5 Cargar las Bases de datos
+require(foreign)
+library(foreign)
+install.packages("questionr")
+library (questionr)
+SDEMT215<-data.frame(read.dbf("C:\\Users\\SALA-C19\\Desktop\\SDEMT215.dbf"))
+
+#COE1T215<-data.frame(read.dbf("COE1T215.dbf"))
+#COE2T215<-data.frame(read.dbf("COE1T215.dbf"))
+#4.1 Recodificacion de variables numericas (rangos)
+
+#Metodo 1
+#attach(SDEMT215)
+SDEMT215$CLASE2.1[as.numeric(SDEMT215$CLASE2) >= 0 & as.numeric(SDEMT215$CLASE2) <=2] <-1
+SDEMT215$CLASE2.1[as.numeric(SDEMT215$CLASE2) >= 3 & as.numeric(SDEMT215$CLASE2) <=4] <-2
+#detach(SDEMT215)
+
+#Metodo 2
+attach(SDEMT215)
+SDEMT215$CLASE2.2 <- ifelse(as.numeric(CLASE2) >= 1 & as.numeric(CLASE2) <=2,1,
+                            ifelse(as.numeric(CLASE2) >= 3 & as.numeric(CLASE2) <=3,2,3))
+detach(SDEMT215)
+#4.1.1 Comparacion de los tres metodos
+require (questionr)
+wtd.table(SDEMT215$CLASE2.1)
+wtd.table(SDEMT215$CLASE2.2)
+
+table(SDEMT215$CLASE2.1)
+######################## EJERCICIO RECODIFICAR VARIABLE EDAD #######################
+#### 0 A 14 = 1 NIN@S, 15 A 29 = 2 JOVENES, 30 A 59 = 3 ADULTOS, 60 A 97 = 4 ADULTOS MAYORES, 98 Y 99 = 5 NO ESPECIFICADO
+###### POR LOS METODOS....
+#### DESPUES ETIQUETAN LOS GRUPOS
+### COMPARAR METODOS############
+
+require (foreign)
+library(foreign)
+SDEMT215<-data.frame(read.dbf("C:\\Users\\SALA-C19\\Desktop\\SDEMT215.dbf"))
+
+##### METODO 1
+attach(SDEMT215)
+
+SDEMT215$EDA<- as.numeric(as.character(SDEMT215$EDA))
+
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA) >= 0 & as.numeric(SDEMT215$EDA) <=14] <-1
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA) >= 15 & as.numeric(SDEMT215$EDA) <=29] <-2
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA) >= 30 & as.numeric(SDEMT215$EDA) <=59] <-3
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA) >= 60 & as.numeric(SDEMT215$EDA) <=97] <-4
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA) >= 98 & as.numeric(SDEMT215$EDA) <=99] <-5
+
+require(questionr)
+wtd.table(SDEMT215$EDAD11)
+table(SDEMT215$EDAD11)
+
+##### METODO 2
+
+SDEMT215$EDAD <- ifelse(as.numeric(EDA) >= 1 & as.numeric(EDA) <=15,1,
+                            ifelse(as.numeric(EDA) >= 16 & as.numeric(EDA) <=30,2,
+                                   ifelse(as.numeric(EDA) >= 31 & as.numeric(EDA) <=60,3,
+                                          ifelse(as.numeric(EDA) >= 61 & as.numeric(EDA) <=98,4,5))))
+
+table(SDEMT215$EDAD)
+
+######## ETIQUETAR ##########
+tablaEDAD99<- ordered(SDEMT215$EDAD, levels=c("1","2","3","4","5"),
+                      labels=c("NIÑ@S","JOVENES","ADULTOS","ADULTOS MAYORES","NO ESPECIFICADO"))
+
+table(tablaEDAD99) 
