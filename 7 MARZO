@@ -1,0 +1,38 @@
+data("AirPassengers")
+panam<- (AirPassengers)
+class(panam)
+start(panam); end(panam); frequency (panam)
+panam
+### EJEMPLO ppp<- ts(base1,start = c(1998,1),freq = 4)### funcion para declarar una base de datos como ST ts=time series, 1998 enero (trimestral)
+plot(panam)### graficar
+
+plot (panam, main = "Número de pasajeros aereos en EUA, 1949-1960",
+        xlab = "Pasajeros (miles)",
+        ylab = "Años")############## con etiquetas
+
+layout(1:2)#### para poner 2 graficas en la misma pantalla
+
+plot(panam)######## sin etiquetas
+
+plot(aggregate(panam))### agrega una linea de tendencia
+
+##### EJERCICIO. 
+### 1)Generar un data frame con la tasa de desocupación que inicie en el primer
+### trimestre del 2005 
+###### Tasa desocupación 3.4, 4.8, 3.3, 5.6, 3.2, 2.9, 1.9, 2.8, 6.0, 4.3, 2.2
+### 2)Convertirla en serie de tiempo y graficar la ST y la tendencia 
+### *** punto extra librarla del segundo examen...
+### 3)Obtener un pdf, .jpg. tiff. png con las 2 gráficas en una misma imagen
+###### Lo suben en github martes 8 de marzo antes de las 11:59 hrs...
+
+tasadesocup<- c(3.4, 4.8, 3.3, 5.6, 3.2, 2.9, 1.9, 2.8, 6.0, 4.3, 2.2)
+tasa<- data.frame(tasadesocup)
+st<- ts(tasa,start = c(2005,1), frequency = 4)
+class(st)
+plot(st,main="Tasa de desocupación")
+plot(aggregate(st))
+layout(1:2)
+jpeg("Grafica_tasa_desocupación1.jpg")
+plot(st,main="Tasa de desocupación")
+plot(aggregate (st))
+dev.off()
