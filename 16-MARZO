@@ -1,0 +1,59 @@
+#TRABAJO EN CLASE DE SERIES DE TIEMPO CON SERGIO :
+  #### Generar 4 objetos con datos aleatorios y que tengan 60 datos
+  ### dato 1 de n?mero de profesionista (mill)rango de 5 a 8
+  ### dato 2 crec pib rango de 0 a 5
+  ### dato 3 porcentaje de ocupados rango de 40 a 60
+  ### dato 4 porcentaje de desocupados rango de 3 a 8
+  #### 1) una vez que generen los datos hacer un data frame de los 4 objetos
+  #### 2) mostrar en consola los primeros 12 y ultimos 12 datos
+  #### 3) convertir los objetos en series de tiempo desde el data frame comezando en 2010 y son datos mensuales
+  #### 4) graficar los profesionistas y ocupados en la misma imagen
+  #### 5) graficar pib y desocupados en la misma imagen
+  #### 6) graficar todas juntas
+### 7) creaR serie de tiempo multiple!!!!8
+#### 8 ) graficar serie de tiempo multiple 
+#### 9 ) dividir serie de tiempo y graficar solo el ultimo año...
+#### 8 ) analizar las graficas ( si hay alguna tendencia o variacion estacional) (investigar)
+
+num_prof<- sample(5:8,60, replace = TRUE)
+crec_pib<- sample(0:5,60, replace =TRUE)
+porc_ocup<- sample(40:60,60, replace =TRUE)
+porc_desoc<- sample(3:8,60, replace = TRUE)
+
+data<-data.frame(num_prof, crec_pib, porc_ocup, porc_desoc)
+View(data)
+
+data2<-data[c(1:12, 49:60),]
+View(data2)
+
+data_ts<- ts(data, start=2010, freq=12)
+View(data_ts)
+class(data_ts)
+
+x11()
+layout(1:2)
+plot(data_ts[,1],main = "Profesionistas",xlab = "Años",ylab="No de Profesionistas(miles)",col="blue")
+plot(data_ts[,3],main = "Tasa de Ocupados",xlab = "Años",ylab="Porcentaje",col="red")
+
+x11()
+layout(1:2)
+plot(data_ts[,2],main = "PIB",xlab = "Años",ylab="Crecimiento",col="blue")
+plot(data_ts[,4],main = "Tasa de Desocupados",xlab = "Años",ylab="Porcentaje",col="red")
+
+num_prof<- ts(data_ts[,1], start=2010, freq=12)
+crec_pib<- ts(data_ts[,2], start=2010,freq=12)
+porc_ocup<- ts(data_ts[,3], start=2010,freq=12)
+porc_desoc<- ts(data_ts[,4], start=2010,freq=12)
+
+mult<- ts.intersect(num_prof,porc_ocup)
+mult2<- ts.intersect(crec_pib,porc_desoc)
+plot(mult, main="Profesionistas y Ocupados", xlab="Años", ylab="Cantidad", col="red")
+plot(mult2, main="PIB y Desocupados", xlab="Años", ylab="Cantidad", col="red")
+mult3<- ts.intersect(mult,mult2)
+plot(mult3, main="Serie Multiple", xlab="Años", ylab="Cantidad", col="red")
+
+layout(1:2)
+mult4<-window(mult3, start=c(2014,1), end=c(2014,12))
+plot(mult4, main="Serie Multiple 2014", xlab="Años", ylab="Cantidad", col="red")
+
+##### NO SE PUEDE DECIR REALMENTE SI HAY UNA VARIACION ESTACIONAL O UNA TENDENCIA MUY SUBJETIVA, DADO QUE LOS DATOS SON ALEATORIOS
