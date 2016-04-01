@@ -1,0 +1,60 @@
+#cuando la magnitud de las fluctuaciones estacionales de la serie crece y decrece
+#proporcionalmente con los crecimientos y decrecimientos de la tendencia, respect.
+
+#### una vez que logramos descomponer la st en diversos los elementos de estacionalidad
+#y tendencia hay que desestacionalizar la st y eliminar la tendencia ######
+
+#### EXISTE TENDENCIA CUANDO existe un patron en los datos a largo plazo ya sea
+### que aumenta o disminuye los datos
+##### La estacionalidad existe cuando
+### la ST cuando es influenciado por factores estacionales (por ejemplo, el
+### trimestre del año, el mes, o el dia de la semana).
+### existe componente CICLICO en los datos cuando 
+## se detectan incrementos y caidas que no son de tiempo determinado
+## (duracion por lo general de al menos 2 años).
+
+### 3 DE estos elementos normalmente existen confusiones para detectarlos entre 
+### la estacionalidad y el componente ciclico
+###Principales diferencias entre estos dos componentes
+# 1) patron estacional longitud constante ; patron ciclico longitud variable
+# 2) duracion media del componente ciclico mas largo que la longitud del patron estacional 
+# 3) magnitud del ciclico mas variables que magnitud del patron estacional
+# 4) el momento de picos y caidas es predecible con los datos ciclicos
+#, pero impredecible a largo plazo con datos coclicos.
+
+install.packages("fpp")
+require(fpp)
+help (fpp)
+
+plot(window(elec, start = 1980), ylab = "GWh", xlab = "Year", main = "Australian electricity production")
+### estacionalidad, tendencia y no ciclico
+
+plot(bricksq,ylab="million units", xlab="Year", main="Australian clay brick production")
+### estacionalidad y ciclo, no mucha tendencia
+
+plot(hsales, main="Sales of new one-family houses, USA", ylab="Total sales", xlab="Year")
+### No estacionacionalidad ni tendencia, posible ciclo
+
+##################################### 3 EJEMPLOS GRAFICAS DETECTAR TENDENCIA, ESTACIONALIDAD Y CICLO
+tlvisa<- read.csv("C:\\Users\\SALA-C32\\Downloads\\tlvisa.csv", header=T)
+tlvisats<- ts(tlvisa [,5], start=2000, frequency=12)
+plot(tlvisats, main="valor acciones TELEVISA", 
+     ylab="valor cierre")
+###### Dada la grafica podemos decir que tiene tendencia a la alza, estacionalidad y no tiene ciclo
+
+gcarso<- read.csv("C:\\Users\\SALA-C32\\Downloads\\gcarso.csv", header=T) 
+gcarsots<- ts(gcarso [,5], start=2000, frequency=12)
+plot(gcarsots, main="valor acciones GRUPO CARSO", 
+     ylab="valor cierre")
+##### No muestra estacionalidad ni ciclo, pero si muestra tendencia
+
+coca<- read.csv("C:\\Users\\SALA-C32\\Downloads\\coca.csv", header=T) 
+cocats<- ts(coca [,5], start=2000, frequency=12)
+plot(cocats, main="valor acciones COCA-COLA", 
+     ylab="valor cierre")
+##### No muestra estacionalidad ni ciclo, pero si muestra algo de tendencia
+
+layout(1:3)
+pdf(file="tendencias.pdf")
+ts.plot(tlvisats,gcarsots,cocats)
+dev.off()
