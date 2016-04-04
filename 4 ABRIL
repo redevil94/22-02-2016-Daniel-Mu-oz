@@ -1,0 +1,79 @@
+######### 4 abril
+### ica, televisa, america movil
+
+install.packages("fpp")
+require(fpp)
+help (fpp)
+
+televisa<- read.csv("C:\\Users\\SALA-C32\\Downloads\\televisa.csv", header=T)
+televisats<- ts(televisa [,5], start=2000, frequency=12)
+plot(televisats, main="valor acciones TELEVISA", 
+     ylab="valor cierre")
+
+ica<- read.csv("C:\\Users\\SALA-C32\\Downloads\\ica.csv", header=T)
+icats<- ts(ica [,5], start=2000, frequency=12)
+plot(icats, main="valor acciones ICA", 
+     ylab="valor cierre")
+
+americamov<- read.csv("C:\\Users\\SALA-C32\\Downloads\\americamov.csv", header=T)
+americamovts<- ts(americamov [,5], start=2000, frequency=12)
+plot(americamovts, main="valor acciones TELEVISA", 
+     ylab="valor cierre")
+
+seasonplot(icats, s=12, year.labels=TRUE,
+           main="valor acciones ICA",
+           ylab="valor cierre", col=rainbow(20), year.labels.left=TRUE, pch=19)##### grafica de temporalidad (seasonplot)
+
+monthplot(icats, ylab = "valor cierre", xlab="Month",
+          main="valor acciones ICA")
+help ("monthplot")### grafica de subseries temporales (monthplot)
+
+######### AUTOCORRELACION
+# a veces sucede que los valores que toma una variable en el tiempo no son independientes entre si, sino que un valor 
+# determinado depende de los valores anteriores.
+## para obtener la correlacion se necesita obtener primero la covarianza
+
+
+######### COVARIANZA
+# EJERCICIO en R verifiquen que la formula de la covarianza y la correlacion den el mismo resultado que las funciones
+# cov(x,y) y cor(x,y)
+## la covarianza es una medida de asosiacion entre dos variables 
+# cor(x,y) = cov(x,y) \ sd(x)sd(y)
+### cov(x,y) =suma ((xi - x (media))(yi - y ((media)))) / (n-1)
+
+ica5<- icats
+americamov5<- americamovts 
+n<- length(ica5)
+sum(((ica5) - mean(ica5))*(americamov5-mean(americamov5))) / (n - 1) #### covarianza con formula
+cov(ica5, americamov5) #### covarianza con funcion de R
+
+cov(ica5, americamov5) / (sd(ica5)*sd(americamov5)) ######## correlacion con formula
+cor(ica5, americamov5) #### correlacion con funcion
+
+
+############# EJERCICIO 
+## ELEGIR LOS 3 AÑOS QIE UBIQUEN ESTACIONALIDAD, CICLO O TENDENCIA
+# INTERPRETAR ESTOS 3 AÑOS
+##### 2) CALCULAR CON LA FORMULA Y LA FUNCION DE COVARIANZA Y CORRELACION EN LA COMBINACION DE LAS 3 EMPRESAS, 
+##### ES DECIR, EMPRE1 = X, EMPRE2 = Y y EMPRE3 = Z, calcular la correlacion de
+## cor (x,y), cor(y,z) y cor (x,z) para hacerlas "compatibles" uutilicen
+### el window
+
+seasonplot(icats, s=12, year.labels=TRUE,
+           main="valor acciones ICA",
+           ylab="valor cierre", col=rainbow(20), year.labels.left=TRUE, pch=19)
+seasonplot(americamovts, s=12, year.labels=TRUE,
+           main="valor acciones AMERICA MOVIL",
+           ylab="valor cierre", col=rainbow(20), year.labels.left=TRUE, pch=19)
+seasonplot(televisats, s=12, year.labels=TRUE,
+           main="valor acciones TELEVISA",
+           ylab="valor cierre", col=rainbow(20), year.labels.left=TRUE, pch=19)
+
+covica-amer1<-sum(((icats) - mean(icats))*(americamovts-mean(americamovts))) / (n - 1)
+covica-amer2<-cov(icats,americamovts)
+
+covamer-tle1<-sum(((americamovts) - mean(americamovts))*(televisats-mean(televisats))) / (n - 1)
+covamer-tle2<-cov(americamovts,televisats)
+
+covica-tle1<-sum(((icats) - mean(icats))*(televisats-mean(televisats))) / (n - 1)
+covica-tle2<-cov(icats,televisats)
