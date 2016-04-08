@@ -1,0 +1,55 @@
+############## EXAMEN ############
+# 2 partes
+## 1) generan ustedes un script (EN LA COMPUTADORA) 
+## 2) yo les entrego un script y les digo en que lineas expliquen o realicen comentarios (EN PAPEL)
+
+############## ESTRUCTURA EXAMEN ############
+### 1) MANEJO DE BASES DE DATOS EN R 
+           # 1) EXPORTACION BASES, ETIQUETAR, GENERAR UNA BASE DE DATOS,
+              #RECODIFICAR, SELECCIONAR CASOS, GRAFICA 
+           # 2) SERIES DE TIEMPO EN R
+              #DECLARARA UNA ST, DIVIDIR ST, GRAFICAR ST,
+              #INTERPRETAR GRAFICAS CON ESTACIONALIDAD, TENDENCIA Y CICLO.
+                # 2.1) COMO DETERMINAR ESTACIONALIDAD EN UNA ST CON LA FUNCION DE AUTOCORRELACION,
+                      #CALCULO DE CORRELACION Y COVARIANZA ............
+####################### LUNES 18 EXAMEN ########################################################
+#######################    REPASO   11   ABRIL  ###############################################
+
+
+#### Funcion de autocorrelacion!!
+# La autocorrelacion mide la correlacion entre dos variables separadas por k periodos 
+#### Propiedades de la autocorrelacion
+       # PO = 1
+       # -1 <= PO <= 1
+       # simetria Pj = pj -1
+
+install.packages("fpp") ## con el install.. se baja de internet y se queda en la compu para su uso
+install.packages("forecast")
+require (fpp) # solo lo mando llamar, require = library
+acf(beer) ### funcion para conocer la autocorrelacion de los datos
+xx<- acf(beer, main="ACF of quarterly beer production")
+names (xx)
+xx$acf
+
+
+# Results for first 9 lags for beer data:
+   r1     r2     r3    r4      r5     r6      r7    r8     r9
+-0.126 -0.650 -0.094 -0.863 -0.099 -0.0642 -0.098 0.834 -0.116
+   
+### R4 superior a la de los otros retardos
+   # Esto es debido al patron estacional en los datod
+   
+#### LA GRAFICA QUE GENERA EL ACF SE LE DENOMINA "correlograma" y permite identificar la 
+   # autocorrelacion en una serie de tiempo
+   
+## Si hay estacionalidad, la ACF en el desfase temporal sera grande y positivo.
+   
+   #######################   NETFLIX   ######################## 
+   
+nfix<- read.csv("C:\\Users\\SALA-C32\\Downloads\\netflix.csv", header = TRUE)
+nfixst<- ts(nfix [,5], start = 2015, frequency = 12)
+plot.ts(nfixst)
+acf (nfixst)
+xx<- acf(nfixst, main="ACF of quarterly beer production")
+names (xx)
+xx$acf
