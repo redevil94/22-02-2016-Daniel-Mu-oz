@@ -1,0 +1,47 @@
+#############################
+install.packages("fpp")
+install.packages("forecast")
+library(fpp)
+library(forecast)
+pib<- read.csv("C:\\Users\\SALAC-32\\Desktop\\pib-trimestral.csv", header= TRUE)
+pibd<- data.frame(pib)
+pibts<- ts(pibd[,2], start = 1993, frequency = 4)
+View(pibts)
+plot(pibts)
+acf(pibts)
+
+############################## MEDIA ###################################
+####### meanf (pibts, h) <. Es la media
+pibtspro<- meanf(pibts, 4)
+plot(pibtspro)
+##### pibts es la st
+######## el numero de datos a proyectar en este caso elegi h = 3
+
+############################# INGENUO #################################
+pibtsnai<- naive(pibts, 4)
+plot(pibtsnai)
+rwf(pibts, 3) # Alternativo
+
+############################ INGENUO ESTACIONAL #######################
+pibtssnai<- snaive(pibts, 4)
+pibtssnai
+plot(pibtssnai)
+help("snaive")
+
+########################### METODO DE LA DERIVA #######################
+pibtsder<- rwf(pibts, 4, drift = T)
+pibtsder
+plot(pibtsder)
+help(accuracy)
+#rwf(st, h, drift=TRUE) rwf es pronostico
+
+evalmed<- accuracy (pibtspro)
+evaling<- accuracy (pibtsnai)
+evalsnai<- accuracy (pibtssnai)
+evalder<- accuracy (pibtsder)
+evalmed
+evaling
+evalsnai
+evalder
+
+#### en este caso los resultados nos dicen que nos conviene el metodo de la derivada ya que es el que se acerca mas a cero
