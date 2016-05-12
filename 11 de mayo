@@ -1,0 +1,67 @@
+############### 11 de mayo
+install.packages("foreign")
+require(foreign)
+install.packages("fpp")
+require(fpp)
+install.packages("forecast")
+require(forecast)
+
+labo <- read.csv("C:\\Users\\SALAC-31\\Desktop\\indicadores-inegi.csv")
+
+############## ejercicio##############################################.......
+trabasal<- ts(labo[,5], start = 2005, frequency = 4 )
+subocupa<- ts(labo[,6], start = 2005, frequency = 4 )
+
+require(forecast)
+require(fpp)
+
+################################################################ serie 1
+mod11<- ses(trabasal, alpha = 0.1, initial="simple", h=4)
+mod12<- ses(trabasal, alpha = 0.6, initial="simple", h=4)
+mod13<- ses(trabasal, alpha = 0.9, initial="simple", h=4)
+
+plot(mod11, plot.conf=FALSE, ylab="trabajo asalariado",
+     xlab="Year", main="", fcol="white", type = "o")
+
+######### GRAFICANDO AJUSTE (valores que mi modelo calcularia )
+lines(fitted(mod11), col="blue", type = "o")
+lines(fitted(mod12), col="red", type = "o")
+lines(fitted(mod13), col="green", type = "o")
+lines(mod11$mean, col="blue", type="o")
+lines(mod12$mean, col="red", type="o")
+lines(mod13$mean, col="green", type="o")
+
+legend("topleft",lty=5, col=c(1,"blue", "red", "green"),
+       c("data", expression(alpha==0.1), expression(alpha==0.6), expression(alpha==0.9)), pch = 10)
+
+a1<-accuracy(mod11)
+b1<-accuracy(mod12)
+c1<-accuracy(mod13)
+a1
+b1
+c1
+
+
+################################################################## serie 2
+mod21<- ses(subocupa, alpha = 0.0001, initial="simple", h=4)
+mod22<- ses(subocupa, alpha = 0.5, initial="simple", h=4)
+mod23<- ses(subocupa, alpha = 0.987, initial="simple", h=4)
+
+plot(mod21, plot.conf=FALSE, ylab="subocupacion",
+     xlab="Year", main="", fcol="white", type = "o")
+lines(fitted(mod21), col="blue", type = "o")
+lines(fitted(mod22), col="red", type = "o")
+lines(fitted(mod23), col="green", type = "o")
+lines(mod21$mean, col="blue", type="o")
+lines(mod22$mean, col="red", type="o")
+lines(mod23$mean, col="green", type="o")
+
+legend("topleft",lty=5, col=c(1,"blue", "red", "green"),
+       c("data", expression(alpha==0.0001), expression(alpha==0.5), expression(alpha==0.987)), pch = 10)
+
+ab2<-accuracy(mod21)
+cd2<-accuracy(mod22)
+ef2<-accuracy(mod23)
+ab2
+cd2
+ef2
