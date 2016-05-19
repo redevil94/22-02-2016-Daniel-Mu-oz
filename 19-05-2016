@@ -1,0 +1,64 @@
+install.packages("foreign")
+require(foreign)
+install.packages("fpp")
+require(fpp)
+install.packages("forecast")
+require(forecast)
+
+##################### ST ascendente
+
+carso<- read.csv("C:\\Users\\SALA-E17\\Downloads\\carso.csv",header = T)
+carsost<- ts(carso[,2], start=2003, frequency = 12)
+
+ajusteHL<- holt(carsost, initial = "simple", h=12)
+ajusteHE<- holt(carsost, initial = "simple", exponential = T, h=12)
+ajusteHAM<-holt(carsost, damped = T)
+ajusteHMA<-holt(carsost, exponential = T, damped = T)
+
+plot(carsost, ylab="Precio",xlab = "Año", main = "Precio de acciones CARSO",
+     col="blue", type="o" )
+
+lines(fitted(ajusteHL),col="PINK",type="o")
+lines(fitted(ajusteHE),col="YELLOW",type="o")
+lines(fitted(ajusteHAM),col="RED",type="o")
+lines(fitted(ajusteHMA),col="GREEN",type="o")
+legend("topleft",lty=1,col=c(1,"PINK","YELLOW","RED","GREEN"),c("data","H Lineal","H. Exp","H. Aditivo","H. Mult."),pch=10)
+
+e1<-accuracy(ajusteHL)
+e2<-accuracy(ajusteHE)
+e3<-accuracy(ajusteHAM)
+e4<-accuracy(ajusteHMA)
+e1
+e2
+e3
+e4
+
+
+
+########################### ST descendente
+
+ica<- read.csv("C:\\Users\\SALA-E17\\Downloads\\ica.csv",header = T)
+icast<- ts(ica[,2], start=2010, frequency = 12)
+
+ajusteHL<- holt(icast, initial = "simple", h=12)
+ajusteHE<- holt(icast, initial = "simple", exponential = T, h=12)
+ajusteHAM<-holt(icast, damped = T)
+ajusteHMA<-holt(icast, exponential = T, damped = T)
+
+plot(icast, ylab="Precio",xlab = "Año", main = "Precio de acciones ICA",
+     col="blue", type="o" )
+
+lines(fitted(ajusteHL),col="PINK",type="o")
+lines(fitted(ajusteHE),col="YELLOW",type="o")
+lines(fitted(ajusteHAM),col="RED",type="o")
+lines(fitted(ajusteHMA),col="GREEN",type="o")
+legend("topleft",lty=1,col=c(1,"PINK","YELLOW","RED","GREEN"),c("data","H Lineal","H. Exp","H. Aditivo","H. Mult."),pch=10)
+
+e1<-accuracy(ajusteHL)
+e2<-accuracy(ajusteHE)
+e3<-accuracy(ajusteHAM)
+e4<-accuracy(ajusteHMA)
+e1
+e2
+e3
+e4
