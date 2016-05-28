@@ -1,0 +1,26 @@
+# EJERCICIO DE CLASE
+require(fpp)
+
+
+tasas <- read.csv ("C://Users//DOCUMENTOS//SERIES//fwdexamencasero//tasas.csv", header = FALSE)
+ocup <- ts(tasas [,1], start  = 2005, frequency = 4)
+desoc <- ts(tasas [,2], start  = 2005, frequency = 4)
+mod1 <- auto.arima(ocup, seasonal=FALSE)
+mod2 <- auto.arima(desoc, seasonal=FALSE)
+
+pro<- forecast(mod,h=4)
+pro1<- forecast (mod1, h=4)
+pro2<- forecast (mod2, h=4)
+
+fitted (pro1)
+fitted (pro2)
+fitted(pro)
+
+x11();plot(pro2, plot.conf=FALSE,col="black", ylab="tasa",xlab="año", main="", fcol="white", type="o")
+  lines(fitted(pro1), col="dark orange", type="o")
+  lines(fitted(pro), col="dark red", type="o")
+  lines(pro1$mean, col="dark orange", type="o")
+  lines(pro2$mean, col="black", type="o")
+  lines(pro$mean,col="dark red", type="o")
+
+ legend("topleft",lty=1, col=c(1,"dark red","dark orange","black"),c("data", expression(ocup), expression(desoc),pch=1))
