@@ -1,0 +1,275 @@
+install.packages("foreign")
+require(foreign)
+install.packages("forecast")
+require(forecast)
+
+#-------------------- 25 de Abril --------
+
+cars<- read.csv("C:\\Users\\daniel\\Desktop\\R\\carso2005.csv", header = T)
+names(cars)
+carsst<- ts(cars[,5], start = 2005, frequency = 12)
+bimb<- read.csv("C:\\Users\\daniel\\Desktop\\R\\bimbo2005.csv", header = T)
+names(bimb)
+bimbst<- ts(bimb[,2], start = 2005, frequency = 12)
+inb<- read.csv("C:\\Users\\daniel\\Desktop\\R\\inbur2005.csv", header = T)
+names(inb)
+inbst<- ts(inb[,5], start = 2005, frequency = 12)
+liver<- read.csv("C:\\Users\\daniel\\Desktop\\R\\liver2005.csv", header = T)
+names(liver)
+liverst<- ts(liver[,2], start = 2005, frequency = 12)
+
+plot(bimbst)
+Acf(bimbst)
+
+bimbmedia<- meanf(bimbst,12)#-------- con respecto a la media de todos los datos
+plot(bimbmedia)
+
+bimbing<- naive(bimbst, 12)#------- con respecto al ultimo mes
+plot(bimbing)
+
+bimbingest<- snaive(bimbst,12)#------- con respecto al periodo pasado (mes-mes)
+plot(bimbingest)
+
+bimbderiva<- rwf(bimbst, 12, drift = TRUE)
+plot(bimbderiva)
+
+deso1 <- window(bimbst,start=2007,end=2010)
+plot(deso1)
+desoaj1 <- meanf(deso1, h=12)
+desoaj2 <- naive(deso1, h=12)
+desoaj3 <- snaive(deso1, h=12)
+
+x11()
+plot(deso1, plot.conf=FALSE, xlim=c(2007,2011), ylim=c(40,100),
+   main="Proyección tasas de desempleo trimestre",lty=100)
+    lines(desoaj1$mean,col=2,lty=100)
+    lines(desoaj2$mean,col=3,lty=100)
+    lines(desoaj3$mean,col=4,lty=100)
+    legend("topleft",lty=100,col=c(1,2,3,4),
+    legend=c("datos originales","metodo media","metodo ingenuo","metodo ingenuo estacional"))
+    
+
+    
+################################################################################
+
+#------------------------- 27 de Abril ---------------------------------------
+
+media<- meanf(bimbst,12)
+ingenuo<- naive(bimbst,12)
+iesta<- snaive(bimbst,12)
+deriva<- rwf(bimbst,12, drift=TRUE)
+    
+evalmed<- accuracy(media)
+evaling<- accuracy(ingenuo)
+evalingest<- accuracy(iesta)
+evalder<- accuracy(deriva)
+evalmed
+evaling
+evalingest
+evalder
+
+plot(media)
+plot(ingenuo)
+plot(iesta)
+plot(deriva)
+
+######################################################################
+
+#-------------------- 11 de Mayo ------------------------------------
+
+help(ses)
+
+mod1<- ses(bimbst,alpha = .2, initial = "simple", 12)
+mod2<- ses(bimbst,alpha = .6, initial = "simple", 12)
+mod3<- ses(bimbst,alpha = .35, initial = "simple", 12)
+plot(mod1,plot.conf=FALSE, ylab="precio de bimbo", xlab = "YEAR", main="BIMBO", 
+     fcol= "blue", type="o")
+# graficar ajustes #----------------------- ajustar modelos al real
+lines(fitted(mod1),col="blue",type="o")
+lines(fitted(mod2),col="red",type="o")
+lines(fitted(mod3),col="green",type="o")
+
+#graficar la media del pronostico #--------- pronosticar a futuro 
+lines(mod1$mean,col="blue",type="o")
+lines(mod2$mean,col="red",type="o")
+lines(mod3$mean,col="green",type="o")
+legend("topleft",lty=5,col=c(1, "blue", "red", "green"),
+       c("data",expression(alpha==0.2), expression(alpha==0.6),
+         expression(alpha==1)),pch=1)
+
+#para extraer datos
+names(mod1)
+#guardarlos en objetos
+aju1<-mod1$fitted
+aju2<-mod2$fitted
+aju3<-mod3$fitted
+res1manual<-(bimbst-aju1)
+res2manual<-(bimbst-aju2)
+res3manual<-(bimbst-aju3)
+res1<-mod1$residuals
+res2<-mod2$residuals
+res3<-mod3$residuals
+mod123<-data.frame(bimbst,aju1,aju2,aju3,res1manual,res2manual,res3manual,res1,res2,res3)
+#comprobacion 
+ceros1<-res1manual-res1
+ceros2<-res2manual-res2
+ceros3<-res3manual-res3
+ceros1
+ceros2
+ceros3
+
+#ejercicio
+#elegir 2 series de tiempo sin tendencia ni estacionalidad
+#serie 1, apha=.1,.6,.9
+#serie2 aplha= .0001, .5 , .987
+#graficar series de tiempo
+#calcular MAE, RMSE, MAPE, SSE
+#DECIDIR QUE MODELO OCUPARIAMOS CON BASE EN LOS MAE, RMSE, MAPE, SSE
+#ARGUMENTAR POR QUE ES MEJOR UTILIZAR UN APLHA CERCANO A 0 O CERCANO A 1
+#SCRIPT GITHUB, ARGUMENTACION Y TABLA A WORD"
+
+inbursa<- read.csv("C:\\Users\\daniel\\Desktop\\R\\inbur2005.csv", header = T)
+names(inbursa)
+inbursast<- ts(inbursa[,5], start = 2005, frequency = 12)
+
+mod11<- ses(inbursast, alpha = .1, initial = "simple",12)
+mod12<- ses(inbursast, alpha = .6, initial= "simple", 12)
+mod13<- ses(inbursast, alpha = .9, initial = "simple", 12)
+
+plot(mod11,plot.conf=FALSE, xlim=c(2005,2018),ylab="PRECIO", xlab = "YEAR", main="CIERRE INBURSA", 
+     fcol= "white", type="o")
+lines(fitted(mod11),col="blue",type="o")
+lines(fitted(mod12),col="red",type="o")
+lines(fitted(mod13),col="green",type="o")
+lines(mod11$mean,col="blue",type="o")
+lines(mod12$mean,col="red",type="o")
+lines(mod13$mean,col="green",type="o")
+legend("topleft",lty=5,col=c(1, "blue", "red", "green"),
+       c("data",expression(alpha==0.1), expression(alpha==0.6),
+         expression(alpha==9)),pch=1)
+
+
+#ANALISIS RESIDUOS
+evalmod1bimbo<-accuracy(mod11)
+evalmod2bimbo<-accuracy(mod12)
+evalmod3bimbo<-accuracy(mod13)
+#DATOS
+evalmod1bimbo
+evalmod2bimbo
+evalmod3bimbo
+
+#######################################################################
+
+#---------------------------- 19 de Mayo------------------------------
+
+cars<- read.csv("C:\\Users\\daniel\\Desktop\\R\\carso2005.csv", header = T)
+names(cars)
+carsst<- ts(cars[,5], start = 2005, frequency = 12)
+
+#modelos a la ST
+mod1carsst<-holt(carsst,initial="simple",h=12)
+mod2carsst<-holt(carsst,initial="simple",h=12, exponential = T)
+mod3carsst<-holt(carsst,damped = T,h=12)
+mod4carsst<-holt(carsst,damped = T,exponential = T ,h=12)
+
+#grafica y ajustes
+plot(carsst,plot.conf=FALSE, ylab="precio", xlab = "año", 
+     main="CARSO", fcol= "white", type="o")
+lines(fitted(mod1carsst),col="blue",type="o")
+lines(fitted(mod2carsst),col="red",type="o")
+lines(fitted(mod3carsst),col="green",type="o")
+lines(fitted(mod4carsst),col="purple",type="o")
+legend("topleft",lty=2,col=c(1,"blue", "red", "green","purple"),
+       c("data","Holt lineal", "Holt exponencial","Amotiguado aditivo", "Amortiguado multiplicativo"),pch=1)
+
+#PRONOSTICOS INDIVIDUALES
+plot(mod1carsst)
+plot(mod2carsst)
+plot(mod3carsst)
+plot(mod4carsst)
+
+#Pruebas de RESIDUOS
+evalmod1tCO2<-accuracy(mod1carsst)
+evalmod2tCO2<-accuracy(mod2carsst)
+evalmod3tCO2<-accuracy(mod3carsst)
+evalmod4tCO2<-accuracy(mod4carsst)
+#DATOS
+evalmod1tCO2
+evalmod2tCO2
+evalmod3tCO2
+evalmod4tCO2
+
+names(mod1carsst)
+
+plot(mod1carsst$residuals)
+plot(mod1carsst$mean)
+
+############################################################################
+
+#---------------------------- 27 de Mayo ------------------------------------
+#IDENTIFICAR RESIDUALES
+#menos del 5% de las lineas veticales sobrepasan el rango
+#analisis de residuales, correlograma, prueba de mateau test
+
+
+#RECORDAR:
+#Ruido Blanco...ARIMA(0,0,0)
+#Caminata aleatoria...ARIMA(0,1,0)
+#Autoregresivo ARIMA(p,0,0)
+#Promedio moviles...ARIMA(0,0,q)
+
+
+#Ejercicio
+require(forecast)
+
+#CARGAR SERIE
+cars<- read.csv("C:\\Users\\daniel\\Desktop\\R\\carso2005.csv", header = T)
+names(cars)
+#CONVERTIR EN TS
+carsst<- ts(cars[,5], start = 2005, frequency = 12)
+#APLICAR EL MODELO AUTOARIMA
+M1<-auto.arima(carsst,seasonal = FALSE)
+#VER LOS RESULTADOS
+M1
+#APLICAR LA FUNCION ARIMA PARA OBTENER OTROS DOS MODELOS
+help(arima)
+M2<-arima(carsst, order = c(2,0,1))
+M2
+M3<-arima(carsst, order = c(0,1,0))
+M3
+#GENERAR LOS PRONOSTICOS
+pronosticos1<-forecast(M1,h=4)
+pronosticos2<-forecast(M2,h=4)
+pronosticos3<-forecast(M3,h=4)
+#GENERAR GRAFICA CON LOS VALORES REALES Y AJUSTADOS
+plot(carsst,plot.conf=FALSE, ylab="%", xlab = "YEAR", main="Precios Carso", 
+     fcol= "white", type="o")
+lines(fitted(M1),col="blue",type="o")
+lines(fitted(M2),col="red",type="o")
+lines(fitted(M3),col="green",type="o")
+legend("bottomleft",lty=2,col=c(1,"blue", "red", "green"),c("data","autoarima(2,1,2)", "arima(2,0,1)","arima(0,1,0) "),pch=1)
+
+
+#GRAFICAR PRONOSTICOS
+lines(pronosticos1$mean,col="blue",type="o")
+lines(pronosticos2$mean,col="red",type="o")
+lines(pronosticos3$mean,col="green",type="o")
+
+#VER PRONOSTICOS
+pronosticos1$mean
+pronosticos2$mean
+pronosticos3$mean
+
+
+#GENERAR MODELO CON SERIE CORTADA Y COMPARAR CON LOS REALES
+carsstcortado<-window(carsst,end=2010)
+Mcortado<-auto.arima(carsstcortado,seasonal = FALSE)
+pronosticoMcortado<-forecast(Mcortado,h=5)
+
+layout(1:1)
+#GENERAR GRAFICA CON LOS VALORES REALES Y AJUSTADOS NUEVOS
+layout(1:3)
+plot(carsst,plot.conf=FALSE, ylab="%", xlab = "AÑO", main="Crecimiento de la población (% anual) México", fcol= "white", type="o",xlim=c(1960,2015))
+plot(carsstcortado,plot.conf=FALSE, ylab="%", xlab = "AÑO", main="Crecimiento de la población (% anual) México hasta 2010", fcol= "white",type="o",xlim=c(1960,2015))
+plot(fitted(Mcortado),plot.conf=FALSE, ylab="%", xlab = "AÑO", main="Crecimiento de la población (% anual) México Modelo y pronósticos", fcol= "white",type="o",xlim=c(1960,2015))
+lines(pronosticoMcortado$mean,col="blue",type="o")
